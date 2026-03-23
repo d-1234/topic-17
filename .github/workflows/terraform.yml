@@ -110,25 +110,15 @@ jobs:
           path: ${{ env.WORKING_DIR }}/tfplan
           retention-days: 1
 
-  # ── Manual Approval ───────────────────────────────────────────────────────────
-  approve:
-    name: Manual Approval
+  # ── Apply (with built-in approval gate) ─────────────────────────────────────
+  apply:
+    name: Terraform Apply
     runs-on: ubuntu-latest
     needs: plan
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     environment:
       name: production
       url: https://console.aws.amazon.com/states
-    steps:
-      - name: Awaiting approval
-        run: echo "Waiting for manual approval in GitHub Environments..."
-
-  # ── Apply ─────────────────────────────────────────────────────────────────────
-  apply:
-    name: Terraform Apply
-    runs-on: ubuntu-latest
-    needs: approve
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     defaults:
       run:
         working-directory: ${{ env.WORKING_DIR }}
@@ -149,11 +139,5 @@ jobs:
       - name: terraform init
         run: terraform init
 
-      - name: Download plan artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: tfplan
-          path: ${{ env.WORKING_DIR }}
-
       - name: terraform apply
-        run: terraform apply -auto-approve tfplan
+        run: terraform apply -auto-approve -no-color
