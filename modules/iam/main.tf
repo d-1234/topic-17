@@ -23,11 +23,11 @@ resource "aws_kms_key" "main" {
         Resource  = "*"
       },
       {
-        Sid    = "CloudWatchLogs"
-        Effect = "Allow"
+        Sid       = "CloudWatchLogs"
+        Effect    = "Allow"
         Principal = { Service = "logs.${local.region}.amazonaws.com" }
-        Action = ["kms:Encrypt*", "kms:Decrypt*", "kms:GenerateDataKey*", "kms:DescribeKey"]
-        Resource = "*"
+        Action    = ["kms:Encrypt*", "kms:Decrypt*", "kms:GenerateDataKey*", "kms:DescribeKey"]
+        Resource  = "*"
         Condition = {
           ArnLike = {
             "kms:EncryptionContext:aws:logs:arn" = "arn:aws:logs:${local.region}:${local.account_id}:*"
@@ -63,21 +63,21 @@ resource "aws_iam_role_policy" "lambda_policy" {
     Version = "2012-10-17"
     Statement = [
       {
-        Sid    = "Logs"
-        Effect = "Allow"
-        Action = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"]
+        Sid      = "Logs"
+        Effect   = "Allow"
+        Action   = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"]
         Resource = "arn:aws:logs:${local.region}:${local.account_id}:log-group:/aws/lambda/*"
       },
       {
-        Sid    = "S3Evidence"
-        Effect = "Allow"
-        Action = ["s3:PutObject", "s3:GetObject"]
+        Sid      = "S3Evidence"
+        Effect   = "Allow"
+        Action   = ["s3:PutObject", "s3:GetObject"]
         Resource = "arn:aws:s3:::${var.name_prefix}-evidence-*/*"
       },
       {
-        Sid    = "SNS"
-        Effect = "Allow"
-        Action = ["sns:Publish"]
+        Sid      = "SNS"
+        Effect   = "Allow"
+        Action   = ["sns:Publish"]
         Resource = "arn:aws:sns:${local.region}:${local.account_id}:${var.name_prefix}-*"
       },
       {
@@ -100,21 +100,21 @@ resource "aws_iam_role_policy" "lambda_policy" {
         Resource = "*"
       },
       {
-        Sid    = "IAMKeyDisable"
-        Effect = "Allow"
-        Action = ["iam:UpdateAccessKey", "iam:ListAccessKeys"]
+        Sid      = "IAMKeyDisable"
+        Effect   = "Allow"
+        Action   = ["iam:UpdateAccessKey", "iam:ListAccessKeys"]
         Resource = "*"
       },
       {
-        Sid    = "KMS"
-        Effect = "Allow"
-        Action = ["kms:GenerateDataKey", "kms:Decrypt"]
+        Sid      = "KMS"
+        Effect   = "Allow"
+        Action   = ["kms:GenerateDataKey", "kms:Decrypt"]
         Resource = aws_kms_key.main.arn
       },
       {
-        Sid    = "SecurityHub"
-        Effect = "Allow"
-        Action = ["securityhub:BatchUpdateFindings"]
+        Sid      = "SecurityHub"
+        Effect   = "Allow"
+        Action   = ["securityhub:BatchUpdateFindings"]
         Resource = "*"
       }
     ]

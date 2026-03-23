@@ -70,13 +70,13 @@ resource "aws_cloudwatch_event_target" "securityhub_sfn" {
 
   input_transformer {
     input_paths = {
-      finding_id   = "$.detail.findings[0].Id"
-      severity     = "$.detail.findings[0].Severity.Label"
-      title        = "$.detail.findings[0].Title"
+      finding_id    = "$.detail.findings[0].Id"
+      severity      = "$.detail.findings[0].Severity.Label"
+      title         = "$.detail.findings[0].Title"
       resource_type = "$.detail.findings[0].Resources[0].Type"
-      resource_id  = "$.detail.findings[0].Resources[0].Id"
-      account      = "$.detail.findings[0].AwsAccountId"
-      region       = "$.region"
+      resource_id   = "$.detail.findings[0].Resources[0].Id"
+      account       = "$.detail.findings[0].AwsAccountId"
+      region        = "$.region"
     }
     input_template = <<-EOT
     {
