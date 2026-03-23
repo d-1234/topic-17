@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2024-01-01T00:00:00.000Z" agent="draw.io" version="21.0.0">
+  <diagram name="AWS Security POC Architecture" id="security-poc-arch">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- TITLE -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <mxCell id="title" value="Centralized Detection &amp; Automated Incident Response — AWS Single Account POC"
+          style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;fontColor=#232F3E;"
+          vertex="1" parent="1">
+          <mxGeometry x="200" y="20" width="1200" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- DETECTION LAYER SWIMLANE -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <mxCell id="detection_lane" value="🔍 Detection Layer" style="swimlane;startSize=30;fillColor=#E8F4FD;strokeColor=#1A73E8;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="480" height="200" as="geometry" />
+        </mxCell>
+
+        <!-- GuardDuty -->
+        <mxCell id="guardduty" value="Amazon GuardDuty&#xa;(Threat Detection)"
+          style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.guardduty;labelBackgroundColor=#ffffff;sketch=0;fontStyle=1;fillColor=#DD344C;strokeColor=#ffffff;fontColor=#232F3E;"
+          vertex="1" parent="detection_lane">
+          <mxGeometry x="40" y="70" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="guardduty_lbl" value="GuardDuty" style="text;html=1;align=center;fontSize=10;" vertex="1" parent="detection_lane">
+          <mxGeometry x="20" y="155" width="120" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Security Hub -->
+        <mxCell id="sechub" value="AWS Security Hub&#xa;(Central Findings)"
+          style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.security_hub;labelBackgroundColor=#ffffff;sketch=0;fontStyle=1;fillColor=#DD344C;strokeColor=#ffffff;fontColor=#232F3E;"
+          vertex="1" parent="detection_lane">
+          <mxGeometry x="200" y="70" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="sechub_lbl" value="Security Hub" style="text;html=1;align=center;fontSize=10;" vertex="1" parent="detection_lane">
+          <mxGeometry x="180" y="155" width="120" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- IAM Access Analyzer -->
+        <mxCell id="analyzer" value="IAM Access&#xa;Analyzer"
+          style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.identity_and_access_management;labelBackgroundColor=#ffffff;sketch=0;fontStyle=1;fillColor=#DD344C;strokeColor=#ffffff;fontColor=#232F3E;"
+          vertex="1" parent="detection_lane">
+          <mxGeometry x="360" y="70" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="analyzer_lbl" value="IAM Analyzer" style="text;html=1;align=center;fontSize=10;" vertex="1" parent="detection_lane">
+          <mxGeometry x="340" y="155" width="120" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow: GuardDuty → Security Hub -->
+        <mxCell id="e_gd_sh" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#1A73E8;strokeWidth=2;"
+          edge="1" source="guardduty" target="sechub" parent="detection_lane">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow: IAM Analyzer → Security Hub -->
+        <mxCell id="e_ia_sh" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#1A73E8;strokeWidth=2;"
+          edge="1" source="analyzer" target="sechub" parent="detection_lane">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- EVENTBRIDGE -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <mxCell id="eb_box" value="⚡ EventBridge" style="swimlane;startSize=30;fillColor=#FFF8E1;strokeColor=#F9A825;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="600" y="80" width="200" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="eventbridge" value="Amazon&#xa;EventBridge"
+          style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.eventbridge;labelBackgroundColor=#ffffff;sketch=0;fillColor=#E7157B;strokeColor=#ffffff;"
+          vertex="1" parent="eb_box">
+          <mxGeometry x="61" y="60" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="eb_rules" value="Rules:&#xa;• GuardDuty ≥ MEDIUM&#xa;• SecHub HIGH/CRITICAL"
+          style="text;html=1;align=left;fontSize=9;fillColor=#FFF8E1;" vertex="1" parent="eb_box">
+          <mxGeometry x="10" y="148" width="180" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow: Security Hub → EventBridge -->
+        <mxCell id="e_sh_eb" value="findings" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#F9A825;strokeWidth=2;fontStyle=2;fontSize=10;"
+          edge="1" source="sechub" target="eventbridge" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- STEP FUNCTIONS SOAR -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <mxCell id="sfn_box" value="🔁 SOAR Orchestrator (Step Functions)" style="swimlane;startSize=30;fillColor=#F3E5F5;strokeColor=#7B1FA2;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="880" y="60" width="340" height="240" as="geometry" />
+        </mxCell>
+
+        <mxCell id="sfn" value="AWS Step&#xa;Functions"
+          style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.step_functions;labelBackgroundColor=#ffffff;sketch=0;fillColor=#E7157B;strokeColor=#ffffff;"
+          vertex="1" parent="sfn_box">
+          <mxGeometry x="131" y="50" width="78" height="78" as="geometry" />
+        </mxCell>
+
+        <mxCell id="sfn_steps" value="1. ParseFinding&#xa;2. EvaluateSeverity (HIGH/MED/LOW)&#xa;3. Execute Playbook&#xa;4. CollectEvidence&#xa;5. Notify"
+          style="text;html=1;align=left;fontSize=9;fillColor=#F3E5F5;" vertex="1" parent="sfn_box">
+          <mxGeometry x="20" y="145" width="300" height="75" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow: EventBridge → Step Functions -->
+        <mxCell id="e_eb_sfn" value="trigger" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#7B1FA2;strokeWidth=2;fontStyle=2;fontSize=10;"
+          edge="1" source="eventbridge" target="sfn" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- LAMBDA ACTIONS SWIMLANE -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <mxCell id="lambda_lane" value="🛡️ Automated Response Actions (Lambda)" style="swimlane;startSize=30;fillColor=#E8F5E9;strokeColor=#2E7D32;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="360" width="900" height="200" as="geometry" />
+        </mxCell>
+
+        <!-- Lambda: Parse Finding -->
+        <mxCell id="lam_parse" value="parse_finding&#xa;(Normalize)"
+          style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;labelBackgroundColor=#ffffff;sketch=0;fillColor=#E7157B;strokeColor=#ffffff;"
+          vertex="1" parent="lambda_lane">
+          <mxGeometry x="20" y="60" width="60" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Lambda: Quarantine -->
+        <mxCell id="lam_quarantine" value="quarantine&#xa;(EC2 SG+Stop+Snap)"
+          style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;labelBackgroundColor=#ffffff;sketch=0;fillColor=#E7157B;strokeColor=#ffffff;"
+          vertex="1" parent="lambda_lane">
+          <mxGeometry x="180" y="60" width="60" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Lambda: Block IP -->
+        <mxCell id="lam_blockip" value="block_ip&#xa;(NACL Deny)"
+          style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;labelBackgroundColor=#ffffff;sketch=0;fillColor=#E7157B;strokeColor=#ffffff;"
+          vertex="1" parent="lambda_lane">
+          <mxGeometry x="340" y="60" width="60" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Lambda: Disable Key -->
+        <mxCell id="lam_disablekey" value="disable_key&#xa;(IAM Key Off)"
+          style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;labelBackgroundColor=#ffffff;sketch=0;fillColor=#E7157B;strokeColor=#ffffff;"
+          vertex="1" parent="lambda_lane">
+          <mxGeometry x="500" y="60" width="60" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Lambda: Collect Evidence -->
+        <mxCell id="lam_evidence" value="collect_evidence&#xa;(S3 Store)"
+          style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;labelBackgroundColor=#ffffff;sketch=0;fillColor=#E7157B;strokeColor=#ffffff;"
+          vertex="1" parent="lambda_lane">
+          <mxGeometry x="660" y="60" width="60" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Lambda: Notify -->
+        <mxCell id="lam_notify" value="notify&#xa;(SNS+Slack)"
+          style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;labelBackgroundColor=#ffffff;sketch=0;fillColor=#E7157B;strokeColor=#ffffff;"
+          vertex="1" parent="lambda_lane">
+          <mxGeometry x="820" y="60" width="60" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow: Step Functions → Lambda Lane -->
+        <mxCell id="e_sfn_lam" value="invoke" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#2E7D32;strokeWidth=2;fontStyle=2;fontSize=10;"
+          edge="1" source="sfn" target="lam_parse" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- STORAGE & NOTIFICATION LAYER -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <mxCell id="storage_lane" value="📦 Storage &amp; Notifications" style="swimlane;startSize=30;fillColor=#FBE9E7;strokeColor=#BF360C;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="640" width="900" height="200" as="geometry" />
+        </mxCell>
+
+        <!-- S3 Evidence -->
+        <mxCell id="s3" value="S3 Evidence Bucket&#xa;(KMS+Versioning+Lifecycle)"
+          style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.s3;labelBackgroundColor=#ffffff;sketch=0;fillColor=#3F8624;strokeColor=#ffffff;"
+          vertex="1" parent="storage_lane">
+          <mxGeometry x="100" y="60" width="78" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- SNS -->
+        <mxCell id="sns" value="SNS Topic&#xa;(Alerts)"
+          style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.sns;labelBackgroundColor=#ffffff;sketch=0;fillColor=#E7157B;strokeColor=#ffffff;"
+          vertex="1" parent="storage_lane">
+          <mxGeometry x="380" y="60" width="78" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- Slack -->
+        <mxCell id="slack" value="Slack&#xa;(Webhook)"
+          style="shape=mxgraph.cisco.misc.workstation;fillColor=#dae8fc;strokeColor=#6c8ebf;"
+          vertex="1" parent="storage_lane">
+          <mxGeometry x="620" y="65" width="78" height="68" as="geometry" />
+        </mxCell>
+
+        <!-- EC2 Target -->
+        <mxCell id="ec2" value="EC2 Instance&#xa;(Target Resource)"
+          style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2;labelBackgroundColor=#ffffff;sketch=0;fillColor=#ED7100;strokeColor=#ffffff;"
+          vertex="1" parent="storage_lane">
+          <mxGeometry x="780" y="60" width="78" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- Arrows: Lambda → Storage -->
+        <mxCell id="e_lam_s3" value="store evidence" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#BF360C;strokeWidth=2;fontStyle=2;fontSize=9;"
+          edge="1" source="lam_evidence" target="s3" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e_lam_sns" value="publish alert" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#BF360C;strokeWidth=2;fontStyle=2;fontSize=9;"
+          edge="1" source="lam_notify" target="sns" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e_sns_slack" value="webhook" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#BF360C;strokeWidth=2;fontStyle=2;fontSize=9;"
+          edge="1" source="sns" target="slack" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e_lam_ec2" value="quarantine/stop" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#BF360C;strokeWidth=2;fontStyle=2;fontSize=9;"
+          edge="1" source="lam_quarantine" target="ec2" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- LEGEND -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <mxCell id="legend" value="Legend" style="swimlane;startSize=25;fillColor=#F5F5F5;strokeColor=#666666;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="360" width="220" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="leg1" value="→ Data / Finding Flow" style="text;html=1;fontSize=10;strokeColor=#1A73E8;fontColor=#1A73E8;" vertex="1" parent="legend">
+          <mxGeometry x="10" y="35" width="200" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="leg2" value="→ Trigger / Invoke" style="text;html=1;fontSize=10;strokeColor=#7B1FA2;fontColor=#7B1FA2;" vertex="1" parent="legend">
+          <mxGeometry x="10" y="60" width="200" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="leg3" value="→ Response Action" style="text;html=1;fontSize=10;strokeColor=#2E7D32;fontColor=#2E7D32;" vertex="1" parent="legend">
+          <mxGeometry x="10" y="85" width="200" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="leg4" value="→ Store / Notify" style="text;html=1;fontSize=10;strokeColor=#BF360C;fontColor=#BF360C;" vertex="1" parent="legend">
+          <mxGeometry x="10" y="110" width="200" height="20" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
